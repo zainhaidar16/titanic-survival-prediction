@@ -3,7 +3,6 @@ import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-# import matplotlib.pyplot as plt
 
 def manipulate_df(df):
     # Update sex column to numerical
@@ -22,20 +21,37 @@ def manipulate_df(df):
 train_df = pd.read_csv("train.csv")
 manipulated_df = manipulate_df(train_df)
 
-# Sidebar for analytics
-st.sidebar.header("Passenger Analytics")
-st.sidebar.subheader("Gender Distribution")
-gender_counts = manipulated_df['Sex'].value_counts()
-st.sidebar.bar_chart(gender_counts)
+# Dropdown to select analytics
+analytics_option = st.selectbox("Select Analytics to Display", 
+                                ("Gender Distribution", 
+                                 "Class Distribution", 
+                                 "Age Distribution", 
+                                 "Survived Distribution"))
 
-st.sidebar.subheader("Class Distribution")
-class_counts = train_df['Pclass'].value_counts()
-st.sidebar.bar_chart(class_counts)
+# Show the selected analytics in the main layout
+if analytics_option == "Gender Distribution":
+    st.subheader("Gender Distribution")
+    gender_counts = manipulated_df['Sex'].value_counts()
+    gender_counts.index = ['Male', 'Female']  # Convert index to string labels
+    st.bar_chart(gender_counts)
 
-st.sidebar.subheader("Age Distribution")
-age_groups = pd.cut(train_df['Age'], bins=[0, 12, 18, 30, 50, 80])
-age_group_counts = age_groups.value_counts().sort_index().rename(index=str)
-st.sidebar.bar_chart(age_group_counts)
+elif analytics_option == "Class Distribution":
+    st.subheader("Class Distribution")
+    class_counts = train_df['Pclass'].value_counts()
+    class_counts.index = ['First Class', 'Second Class', 'Third Class']  # Convert index to string labels
+    st.bar_chart(class_counts)
+
+elif analytics_option == "Age Distribution":
+    st.subheader("Age Distribution")
+    age_groups = pd.cut(train_df['Age'], bins=[0, 12, 18, 30, 50, 80])
+    age_group_counts = age_groups.value_counts().sort_index().rename(index=str)
+    st.bar_chart(age_group_counts)
+
+elif analytics_option == "Survived Distribution":
+    st.subheader("Survived Distribution")
+    survived_counts = train_df['Survived'].value_counts()
+    survived_counts.index = ['Not Survived', 'Survived']  # Convert index to string labels
+    st.bar_chart(survived_counts)
 
 # Model training
 features = manipulated_df[['Sex', 'Age', 'FirstClass', 'SecondClass', 'ThirdClass']]
