@@ -3,6 +3,8 @@ import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import confusion_matrix
+import matplotlib.pyplot as plt
 
 def manipulate_df(df):
     # Update sex column to numerical
@@ -21,14 +23,37 @@ def manipulate_df(df):
 train_df = pd.read_csv("train.csv")
 manipulated_df = manipulate_df(train_df)
 
-# Dropdown to select analytics
-analytics_option = st.selectbox("Select Analytics to Display", 
-                                ("Gender Distribution", 
-                                 "Class Distribution", 
-                                 "Age Distribution", 
-                                 "Survived Distribution"))
+# Sidebar for analytics selection
+st.sidebar.header("Select Analytics")
+analytics_option = st.sidebar.selectbox("Choose analytics to display", 
+                                        ("None", 
+                                         "Gender Distribution", 
+                                         "Class Distribution", 
+                                         "Age Distribution", 
+                                         "Survived Distribution"))
 
-# Show the selected analytics in the main layout
+# Model training
+features = manipulated_df[['Sex', 'Age', 'FirstClass', 'SecondClass', 'ThirdClass']]
+survival = manipulated_df['Survived']
+X_train, X_test, y_train, y_test = train_test_split(features, survival, test_size=0.3, random_state=42)
+scaler = StandardScaler()
+train_features = scaler.fit_transform(X_train)
+test_features = scaler.transform(X_test)
+
+model = LogisticRegression()
+model.fit(train_features, y_train)
+train_score = model.score(train_features, y_train)
+test_score = model.score(test_features, y_test)
+y_predict = model.predict(test_features)
+
+# Calculating the confusion matrix
+confusion = confusion_matrix(y_test, y_predict)
+FN = confusion[1][0]
+TN = confusion[0][0]
+TP = confusion[1][1]
+FP = confusion[0][1]
+
+# Displaying selected analytics in the main layout
 if analytics_option == "Gender Distribution":
     st.subheader("Gender Distribution")
     gender_counts = manipulated_df['Sex'].value_counts()
@@ -53,16 +78,15 @@ elif analytics_option == "Survived Distribution":
     survived_counts.index = ['Not Survived', 'Survived']  # Convert index to string labels
     st.bar_chart(survived_counts)
 
-# Model training
-features = manipulated_df[['Sex', 'Age', 'FirstClass', 'SecondClass', 'ThirdClass']]
-survival = manipulated_df['Survived']
-X_train, X_test, y_train, y_test = train_test_split(features, survival, test_size=0.3, random_state=42)
-scaler = StandardScaler()
-train_features = scaler.fit_transform(X_train)
-test_features = scaler.transform(X_test)
+# Displaying the model scores and confusion matrix
+st.subheader(f"Train Set Score: {round(train_score, 3)}")
+st.subheader(f"Test Set Score: {round(test_score, 3)}")
 
-model = LogisticRegression()
-model.fit(train_features, y_train)
+fig = plt.figure()
+ax = fig.add_axes([0, 0, 1, 1])
+ax.bar(['False Negative', 'True Negative', 'True Positive', 'False Positive'], [FN, TN, TP, FP])
+ax.set_xlabel('Confusion Matrix')
+st.pyplot(fig)
 
 # Dropdown menu to select passenger
 selected_name = st.selectbox("Select Passenger", train_df['Name'])
