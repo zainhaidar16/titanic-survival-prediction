@@ -3,7 +3,7 @@ import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 def manipulate_df(df):
     # Update sex column to numerical
@@ -34,7 +34,7 @@ st.sidebar.bar_chart(class_counts)
 
 st.sidebar.subheader("Age Distribution")
 age_groups = pd.cut(train_df['Age'], bins=[0, 12, 18, 30, 50, 80])
-age_group_counts = age_groups.value_counts().sort_index()
+age_group_counts = age_groups.value_counts().sort_index().rename(index=str)
 st.sidebar.bar_chart(age_group_counts)
 
 # Model training
