@@ -6,6 +6,21 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import confusion_matrix
 import matplotlib.pyplot as plt
 
+# Set the title and introduction of the app
+st.title("Titanic Survival Prediction App")
+
+st.write("""
+    Welcome to the Titanic Survival Prediction App!
+
+    This application allows you to analyze and predict the survival of passengers aboard the Titanic based on their attributes. 
+    You can explore various analytics such as gender distribution, class distribution, and age distribution of passengers. 
+
+    Additionally, you can select a specific passenger to see detailed information including their predicted survival probability and 
+    whether they would have survived the disaster according to our logistic regression model.
+
+    Use the sidebar to choose different analytics or select a passenger to see their details and prediction.
+""")
+
 def manipulate_df(df):
     df['Sex'] = df['Sex'].map(lambda x: 0 if x == 'male' else 1)
     df['Age'].fillna(value=df['Age'].mean(), inplace=True)
