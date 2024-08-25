@@ -129,3 +129,31 @@ else:
     ax.bar(['False Negative', 'True Negative', 'True Positive', 'False Positive'], [FN, TN, TP, FP])
     ax.set_xlabel('Confusion Matrix')
     st.pyplot(fig)
+
+    # Footer section with personal details and links
+st.markdown(
+    """
+    <style>
+    footer {visibility: hidden;}
+    .footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: #f1f1f1;
+        text-align: center;
+        padding: 10px;
+        font-size: 14px;
+        color: #333;
+    }
+    </style>
+    <div class="footer">
+        <p>Developed with ❤️ by <a href="mailto:contact@zaintheanalyst.com">Zain Haidar</a></p>
+        <p>
+            <a href="https://github.com/zainhaidar16" target="_blank">GitHub</a> |
+            <a href="https://www.linkedin.com/in/zain-haidar" target="_blank">LinkedIn</a> |
+            <a href="https://zaintheanalyst.com" target="_blank">Portfolio</a>
+        </p>
+    </div>
+    """, unsafe_allow_html=True
+)
